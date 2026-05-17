@@ -22,13 +22,9 @@ const (
 	`
 )
 
-type Database struct {
-	DB *sql.DB
-}
-
-func Init(dbFile string) (Database, error) {
+func Init(dbFile string) (*sql.DB, error) {
 	if dbFile == "" {
-		return Database{}, fmt.Errorf("failed to get database path")
+		return nil, fmt.Errorf("failed to get database path")
 	}
 
 	dir := filepath.Dir(dbFile)
@@ -40,7 +36,7 @@ func Init(dbFile string) (Database, error) {
 	if err != nil {
 		file, err := os.Create(dbFile)
 		if err != nil {
-			return Database{}, err
+			return nil, err
 		}
 		file.Close()
 	}
@@ -48,12 +44,12 @@ func Init(dbFile string) (Database, error) {
 	db, err := sql.Open("sqlite", dbFile)
 	if err != nil {
 		db.Close()
-		return Database{}, err
+		return nil, err
 	}
 
 	if err := db.Ping(); err != nil {
 		db.Close()
-		return Database{}, fmt.Errorf("failed to ping database: %w", err)
+		return nil, fmt.Errorf("failed to ping database: %w", err)
 	}
 
 	_, err = db.Exec(schema)
@@ -62,11 +58,5 @@ func Init(dbFile string) (Database, error) {
 		panic(err)
 	}
 
-	return Database{
-		DB: db,
-	}, nil
-}
-
-func (d *Database) Close() {
-	d.DB.Close()
+	return db, nil
 }

@@ -12,6 +12,12 @@ const (
 	webDir = "web"
 )
 
+type Route struct {
+	Method  string
+	Handler http.HandlerFunc
+	Pattern string
+}
+
 type HTTPServer struct {
 	Mux    *chi.Mux
 	Config Config
@@ -39,6 +45,9 @@ func (s *HTTPServer) Run() error {
 	return nil
 }
 
-func (s *HTTPServer) RegisterRoutes() {
+func (s *HTTPServer) Init(routes []Route) {
 	s.Mux.Handle("/*", http.FileServer(http.Dir(webDir)))
+	for _, route := range routes {
+		s.Mux.MethodFunc(route.Method, route.Pattern, route.Handler)
+	}
 }
