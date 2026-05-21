@@ -8,8 +8,8 @@ import (
 )
 
 func (r *TasksRepository) AddTask(
-	taskRequest core_domain.TaskRequest,
-) (core_domain.TaskResponce, error) {
+	taskRequest core_domain.Task,
+) (core_domain.NewTaskResponse, error) {
 	ctx, cancel := context.WithTimeout(
 		context.Background(),
 		10*time.Second,
@@ -31,7 +31,7 @@ func (r *TasksRepository) AddTask(
 		taskRequest.Repeat,
 	).Scan(&id)
 	if err != nil {
-		return core_domain.TaskResponce{}, err
+		return core_domain.NewTaskResponse{}, err
 	}
-	return core_domain.TaskResponce{Id: id}, nil
+	return core_domain.NewTaskResponse{Id: id}, nil
 }

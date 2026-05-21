@@ -8,21 +8,18 @@ import (
 	core_errors "github.com/Fitray/go_final_project/internal/core/errors"
 )
 
-func (s *TasksService) AddTask(
-	taskRequest core_domain.TaskRequest,
-) (core_domain.TaskResponce, error) {
+func (s *TasksService) CheckTask(taskRequest core_domain.Task) error {
 	if taskRequest.Date == "" {
 		taskRequest.Date = time.Now().Format("20060102")
 	}
 
 	t, err := time.Parse("20060102", taskRequest.Date)
 	if err != nil {
-		return core_domain.TaskResponce{},
-			fmt.Errorf("%w:%w", err, core_errors.ErrBadRequest)
+		return fmt.Errorf("%w:%w", err, core_errors.ErrBadRequest)
 	}
 
 	if taskRequest.Title == "" {
-		return core_domain.TaskResponce{}, fmt.Errorf(
+		return fmt.Errorf(
 			"invalid title: %w",
 			core_errors.ErrBadRequest)
 	}
@@ -34,7 +31,7 @@ func (s *TasksService) AddTask(
 	if taskRequest.Repeat != "" {
 		nextDate, err = s.NextDate(now.Format("20060102"), taskRequest.Date, taskRequest.Repeat)
 		if err != nil {
-			return core_domain.TaskResponce{}, err
+			return fmt.Errorf("%w:%w", err, core_errors.ErrBadRequest)
 		}
 	}
 
@@ -45,10 +42,19 @@ func (s *TasksService) AddTask(
 			taskRequest.Date = nextDate
 		}
 	}
+	return nil
+}
+
+func (s *TasksService) AddTask(
+	taskRequest core_domain.Task,
+) (core_domain.NewTaskResponse, error) {
+	if err := s.CheckTask(taskRequest); err != nil {
+		return core_domain.NewTaskResponse{}, err
+	}
 
 	resp, err := s.tasksRepository.AddTask(taskRequest)
 	if err != nil {
-		return core_domain.TaskResponce{}, err
+		return core_domain.NewTaskResponse{}, err
 	}
 	return resp, nil
 }
