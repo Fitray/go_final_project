@@ -28,6 +28,8 @@ type TasksRepository interface {
 		id string,
 	) (core_domain.Task, error)
 	UpdateTask(taskRequest core_domain.Task) error
+	CompleteTask(id string, nextDate string) error
+	DeleteTask(id string) error
 }
 
 func NewTasksService(tasksRepository TasksRepository) TasksService {

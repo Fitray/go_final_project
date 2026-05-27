@@ -8,47 +8,56 @@ import (
 	core_errors "github.com/Fitray/go_final_project/internal/core/errors"
 )
 
-func (s *TasksService) CheckTask(taskRequest core_domain.Task) error {
+func (s *TasksService) CheckTask(
+	taskRequest core_domain.Task,
+) (core_domain.Task, error) {
 	if taskRequest.Date == "" {
 		taskRequest.Date = time.Now().Format("20060102")
 	}
 
 	t, err := time.Parse("20060102", taskRequest.Date)
 	if err != nil {
-		return fmt.Errorf("%w:%w", err, core_errors.ErrBadRequest)
+		return taskRequest,
+			fmt.Errorf("%w:%w", err, core_errors.ErrBadRequest)
 	}
 
 	if taskRequest.Title == "" {
-		return fmt.Errorf(
-			"invalid title: %w",
-			core_errors.ErrBadRequest)
+		return taskRequest,
+			fmt.Errorf("invalid title: %w", core_errors.ErrBadRequest)
 	}
 
-	now := time.Now().UTC()
-	t = t.UTC()
+	todayStr := time.Now().Format("20060102")
+	today, err := time.Parse("20060102", todayStr)
 
-	var nextDate string
-	if taskRequest.Repeat != "" {
-		nextDate, err = s.NextDate(now.Format("20060102"), taskRequest.Date, taskRequest.Repeat)
-		if err != nil {
-			return fmt.Errorf("%w:%w", err, core_errors.ErrBadRequest)
-		}
+	if err != nil {
+		return taskRequest, err
 	}
 
-	if now.After(t) {
-		if nextDate == "" {
-			taskRequest.Date = now.Format("20060102")
+	if t.Before(today) {
+		if taskRequest.Repeat == "" {
+			taskRequest.Date = todayStr
 		} else {
+			nextDate, err := s.NextDate(
+				todayStr,
+				taskRequest.Date,
+				taskRequest.Repeat,
+			)
+			if err != nil {
+				return taskRequest,
+					fmt.Errorf("%w:%w", err, core_errors.ErrBadRequest)
+			}
 			taskRequest.Date = nextDate
 		}
 	}
-	return nil
+
+	return taskRequest, nil
 }
 
 func (s *TasksService) AddTask(
 	taskRequest core_domain.Task,
 ) (core_domain.NewTaskResponse, error) {
-	if err := s.CheckTask(taskRequest); err != nil {
+	taskRequest, err := s.CheckTask(taskRequest)
+	if err != nil {
 		return core_domain.NewTaskResponse{}, err
 	}
 

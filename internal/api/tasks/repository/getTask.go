@@ -7,7 +7,7 @@ import (
 	core_domain "github.com/Fitray/go_final_project/internal/core/domain"
 )
 
-func (t *TasksRepository) getTasks_Rows(
+func (r *TasksRepository) getTasks_Rows(
 	query string, args ...any,
 ) (core_domain.GetTasksResponse, error) {
 	ctx, cancel := context.WithTimeout(
@@ -16,7 +16,7 @@ func (t *TasksRepository) getTasks_Rows(
 	)
 	defer cancel()
 
-	rows, err := t.DB.QueryContext(ctx, query, args...)
+	rows, err := r.DB.QueryContext(ctx, query, args...)
 	if err != nil {
 		return core_domain.GetTasksResponse{
 			Tasks: []core_domain.Task{},
@@ -43,7 +43,7 @@ func (t *TasksRepository) getTasks_Rows(
 	return tasksResponse, nil
 }
 
-func (t *TasksRepository) getTasks_Row(
+func (r *TasksRepository) getTasks_Row(
 	query string, args ...any,
 ) (core_domain.Task, error) {
 	ctx, cancel := context.WithTimeout(
@@ -52,7 +52,7 @@ func (t *TasksRepository) getTasks_Row(
 	)
 	defer cancel()
 
-	row := t.DB.QueryRowContext(ctx, query, args...)
+	row := r.DB.QueryRowContext(ctx, query, args...)
 
 	var tasksResponse core_domain.Task
 	err := row.Scan(
@@ -65,7 +65,7 @@ func (t *TasksRepository) getTasks_Row(
 	return tasksResponse, nil
 }
 
-func (t *TasksRepository) GetTasks_NoSearch(
+func (r *TasksRepository) GetTasks_NoSearch(
 	limit int,
 ) (core_domain.GetTasksResponse, error) {
 	query := `
@@ -74,10 +74,10 @@ func (t *TasksRepository) GetTasks_NoSearch(
 	ORDER BY date
 	LIMIT $1
 	`
-	return t.getTasks_Rows(query, limit)
+	return r.getTasks_Rows(query, limit)
 }
 
-func (t *TasksRepository) GetTasks_TextSearch(
+func (r *TasksRepository) GetTasks_TextSearch(
 	search string, limit int,
 ) (core_domain.GetTasksResponse, error) {
 	query := `
@@ -87,10 +87,10 @@ func (t *TasksRepository) GetTasks_TextSearch(
 	ORDER BY date
 	LIMIT $2
 	`
-	return t.getTasks_Rows(query, "%"+search+"%", limit)
+	return r.getTasks_Rows(query, "%"+search+"%", limit)
 }
 
-func (t *TasksRepository) GetTasks_DateSearch(
+func (r *TasksRepository) GetTasks_DateSearch(
 	search string, limit int,
 ) (core_domain.GetTasksResponse, error) {
 	query := `
@@ -99,10 +99,10 @@ func (t *TasksRepository) GetTasks_DateSearch(
 	WHERE date = $1
 	LIMIT $2
 	`
-	return t.getTasks_Rows(query, search, limit)
+	return r.getTasks_Rows(query, search, limit)
 }
 
-func (t *TasksRepository) GetTasks_FromID(
+func (r *TasksRepository) GetTasks_FromID(
 	id string,
 ) (core_domain.Task, error) {
 	query := `
@@ -110,5 +110,5 @@ func (t *TasksRepository) GetTasks_FromID(
 	FROM scheduler
 	WHERE id = $1
 	`
-	return t.getTasks_Row(query, id)
+	return r.getTasks_Row(query, id)
 }

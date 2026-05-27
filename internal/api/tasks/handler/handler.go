@@ -23,6 +23,8 @@ type TasksService interface {
 	UpdateTask(
 		taskRequest core_domain.Task,
 	) error
+	CompleteTask(id string) error
+	DeleteTask(id string) error
 }
 
 func NewDateHandler(tasksService TasksService) TasksHandler {
@@ -57,6 +59,16 @@ func (h *TasksHandler) Routes() []core_server.Route {
 			Method:  http.MethodPut,
 			Pattern: "/api/task",
 			Handler: h.UpdateTask,
+		},
+		{
+			Method:  http.MethodPost,
+			Pattern: "/api/task/done",
+			Handler: h.CompleteTask,
+		},
+		{
+			Method:  http.MethodDelete,
+			Pattern: "/api/task",
+			Handler: h.DeleteTask,
 		},
 	}
 }

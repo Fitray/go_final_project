@@ -5,13 +5,10 @@ import (
 	"fmt"
 	"time"
 
-	core_domain "github.com/Fitray/go_final_project/internal/core/domain"
 	core_errors "github.com/Fitray/go_final_project/internal/core/errors"
 )
 
-func (r *TasksRepository) UpdateTask(
-	taskRequest core_domain.Task,
-) error {
+func (r *TasksRepository) DeleteTask(id string) error {
 	ctx, cancel := context.WithTimeout(
 		context.Background(),
 		10*time.Second,
@@ -19,13 +16,9 @@ func (r *TasksRepository) UpdateTask(
 	defer cancel()
 
 	query := `
-	UPDATE scheduler
-	SET date = $1, title = $2, comment = $3, repeat = $4
-	WHERE id = $5
+	DELETE FROM scheduler WHERE id=$1
 	`
-	res, err := r.DB.ExecContext(ctx, query,
-		taskRequest.Date, taskRequest.Title, taskRequest.Comment,
-		taskRequest.Repeat, taskRequest.Id)
+	res, err := r.DB.ExecContext(ctx, query, id)
 	if err != nil {
 		return err
 	}

@@ -8,7 +8,7 @@ import (
 	core_errors "github.com/Fitray/go_final_project/internal/core/errors"
 )
 
-func (t *TasksService) GetTasks(
+func (s *TasksService) GetTasks(
 	search string, limit int,
 ) (core_domain.GetTasksResponse, error) {
 	if limit <= 0 {
@@ -20,7 +20,7 @@ func (t *TasksService) GetTasks(
 	if search != "" {
 		if time, err := time.Parse("02.01.2006", search); err == nil {
 			search = time.Format("20060102")
-			tasksReponse, err := t.tasksRepository.GetTasks_DateSearch(search, limit)
+			tasksReponse, err := s.tasksRepository.GetTasks_DateSearch(search, limit)
 			if err != nil {
 				return core_domain.GetTasksResponse{
 					Tasks: []core_domain.Task{},
@@ -28,7 +28,7 @@ func (t *TasksService) GetTasks(
 			}
 			return tasksReponse, nil
 		} else {
-			tasksReponse, err := t.tasksRepository.GetTasks_TextSearch(search, limit)
+			tasksReponse, err := s.tasksRepository.GetTasks_TextSearch(search, limit)
 			if err != nil {
 				return core_domain.GetTasksResponse{
 					Tasks: []core_domain.Task{},
@@ -38,7 +38,7 @@ func (t *TasksService) GetTasks(
 		}
 	}
 
-	tasksReponse, err := t.tasksRepository.GetTasks_NoSearch(limit)
+	tasksReponse, err := s.tasksRepository.GetTasks_NoSearch(limit)
 	if err != nil {
 		return core_domain.GetTasksResponse{
 			Tasks: []core_domain.Task{},
@@ -47,10 +47,10 @@ func (t *TasksService) GetTasks(
 	return tasksReponse, nil
 }
 
-func (t *TasksService) GetTask(
+func (s *TasksService) GetTask(
 	id string,
 ) (core_domain.Task, error) {
-	taskResponse, err := t.tasksRepository.GetTasks_FromID(id)
+	taskResponse, err := s.tasksRepository.GetTasks_FromID(id)
 	if err != nil {
 		return core_domain.Task{}, err
 	}

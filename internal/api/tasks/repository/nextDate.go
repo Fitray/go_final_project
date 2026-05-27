@@ -46,7 +46,7 @@ func nextDate_Year(
 	now, start time.Time, year int,
 ) (string, error) {
 	for {
-		start = start.AddDate(1, 0, 0)
+		start = start.AddDate(year, 0, 0)
 		if start.After(now) {
 			return start.Format("20060102"), nil
 		}
