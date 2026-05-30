@@ -2,7 +2,6 @@ package auth_handler
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
 	core_domain "github.com/Fitray/go_final_project/internal/core/domain"
@@ -26,8 +25,6 @@ func (h *AuthHandler) SignIn(w http.ResponseWriter, r *http.Request) {
 			core_errors.GetStatusCode(err))
 		return
 	}
-
-	log.Printf("token: %s", token)
 
 	wr.JSONResponce(map[string]string{"token": token}, http.StatusOK)
 }
