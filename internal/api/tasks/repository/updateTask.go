@@ -3,7 +3,6 @@ package tasks_repository
 import (
 	"context"
 	"fmt"
-	"time"
 
 	core_domain "github.com/Fitray/go_final_project/internal/core/domain"
 	core_errors "github.com/Fitray/go_final_project/internal/core/errors"
@@ -14,7 +13,7 @@ func (r *TasksRepository) UpdateTask(
 ) error {
 	ctx, cancel := context.WithTimeout(
 		context.Background(),
-		10*time.Second,
+		r.DB.Timeout,
 	)
 	defer cancel()
 
@@ -23,7 +22,7 @@ func (r *TasksRepository) UpdateTask(
 	SET date = $1, title = $2, comment = $3, repeat = $4
 	WHERE id = $5
 	`
-	res, err := r.DB.ExecContext(ctx, query,
+	res, err := r.DB.DB.ExecContext(ctx, query,
 		taskRequest.Date, taskRequest.Title, taskRequest.Comment,
 		taskRequest.Repeat, taskRequest.Id)
 	if err != nil {

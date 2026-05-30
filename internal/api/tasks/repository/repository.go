@@ -1,11 +1,13 @@
 package tasks_repository
 
-import "database/sql"
+import (
+	core_db "github.com/Fitray/go_final_project/internal/core/db"
+)
 
 type TasksRepository struct {
-	DB *sql.DB
+	DB core_db.Database
 }
 
-func NewTasksRepository(db *sql.DB) TasksRepository {
+func NewTasksRepository(db core_db.Database) TasksRepository {
 	return TasksRepository{DB: db}
 }

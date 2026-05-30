@@ -13,9 +13,10 @@ const (
 )
 
 type Route struct {
-	Method  string
-	Handler http.HandlerFunc
-	Pattern string
+	Method      string
+	Handler     http.HandlerFunc
+	Pattern     string
+	Middlewares chi.Middlewares
 }
 
 type HTTPServer struct {
@@ -24,9 +25,9 @@ type HTTPServer struct {
 }
 
 func NewHTTPServer(config Config) HTTPServer {
-	mux := chi.NewMux()
+	r := chi.NewRouter()
 	return HTTPServer{
-		Mux:    mux,
+		Mux:    r,
 		Config: config,
 	}
 }
@@ -48,6 +49,11 @@ func (s *HTTPServer) Run() error {
 func (s *HTTPServer) Init(routes []Route) {
 	s.Mux.Handle("/*", http.FileServer(http.Dir(webDir)))
 	for _, route := range routes {
-		s.Mux.MethodFunc(route.Method, route.Pattern, route.Handler)
+		s.Mux.Group(func(r chi.Router) {
+			if len(route.Middlewares) > 0 {
+				r.Use(route.Middlewares...)
+			}
+			r.MethodFunc(route.Method, route.Pattern, route.Handler)
+		})
 	}
 }

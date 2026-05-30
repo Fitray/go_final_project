@@ -11,11 +11,6 @@ type NewTaskResponse struct {
 	Id int `json:"id"`
 }
 
-// type GetTasksRequest struct {
-// 	Search string
-// 	Limit  int
-// }
-
 type Task struct {
 	Date    string  `json:"date"`
 	Title   string  `json:"title"`
@@ -26,4 +21,8 @@ type Task struct {
 
 type GetTasksResponse struct {
 	Tasks []Task `json:"tasks"`
+}
+
+type SignInRequest struct {
+	Password string `json:"password"`
 }

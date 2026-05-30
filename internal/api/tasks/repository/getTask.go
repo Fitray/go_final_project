@@ -2,7 +2,6 @@ package tasks_repository
 
 import (
 	"context"
-	"time"
 
 	core_domain "github.com/Fitray/go_final_project/internal/core/domain"
 )
@@ -12,11 +11,11 @@ func (r *TasksRepository) getTasks_Rows(
 ) (core_domain.GetTasksResponse, error) {
 	ctx, cancel := context.WithTimeout(
 		context.Background(),
-		10*time.Second,
+		r.DB.Timeout,
 	)
 	defer cancel()
 
-	rows, err := r.DB.QueryContext(ctx, query, args...)
+	rows, err := r.DB.DB.QueryContext(ctx, query, args...)
 	if err != nil {
 		return core_domain.GetTasksResponse{
 			Tasks: []core_domain.Task{},
@@ -48,11 +47,11 @@ func (r *TasksRepository) getTasks_Row(
 ) (core_domain.Task, error) {
 	ctx, cancel := context.WithTimeout(
 		context.Background(),
-		10*time.Second,
+		r.DB.Timeout,
 	)
 	defer cancel()
 
-	row := r.DB.QueryRowContext(ctx, query, args...)
+	row := r.DB.DB.QueryRowContext(ctx, query, args...)
 
 	var tasksResponse core_domain.Task
 	err := row.Scan(

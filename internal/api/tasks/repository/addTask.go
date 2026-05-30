@@ -2,7 +2,6 @@ package tasks_repository
 
 import (
 	"context"
-	"time"
 
 	core_domain "github.com/Fitray/go_final_project/internal/core/domain"
 )
@@ -12,7 +11,7 @@ func (r *TasksRepository) AddTask(
 ) (core_domain.NewTaskResponse, error) {
 	ctx, cancel := context.WithTimeout(
 		context.Background(),
-		10*time.Second,
+		r.DB.Timeout,
 	)
 	defer cancel()
 
@@ -22,7 +21,7 @@ func (r *TasksRepository) AddTask(
 	RETURNING id
 	`
 	var id int
-	err := r.DB.QueryRowContext(
+	err := r.DB.DB.QueryRowContext(
 		ctx,
 		query,
 		taskRequest.Date,

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"time"
 
 	_ "modernc.org/sqlite"
 )
@@ -22,9 +23,14 @@ const (
 	`
 )
 
-func Init(dbFile string) (*sql.DB, error) {
+type Database struct {
+	DB      *sql.DB
+	Timeout time.Duration
+}
+
+func Init(dbFile string, timeout time.Duration) (Database, error) {
 	if dbFile == "" {
-		return nil, fmt.Errorf("failed to get database path")
+		return Database{}, fmt.Errorf("failed to get database path")
 	}
 
 	dir := filepath.Dir(dbFile)
@@ -36,7 +42,7 @@ func Init(dbFile string) (*sql.DB, error) {
 	if err != nil {
 		file, err := os.Create(dbFile)
 		if err != nil {
-			return nil, err
+			return Database{}, err
 		}
 		file.Close()
 	}
@@ -44,12 +50,12 @@ func Init(dbFile string) (*sql.DB, error) {
 	db, err := sql.Open("sqlite", dbFile)
 	if err != nil {
 		db.Close()
-		return nil, err
+		return Database{}, err
 	}
 
 	if err := db.Ping(); err != nil {
 		db.Close()
-		return nil, fmt.Errorf("failed to ping database: %w", err)
+		return Database{}, fmt.Errorf("failed to ping database: %w", err)
 	}
 
 	_, err = db.Exec(schema)
@@ -58,5 +64,12 @@ func Init(dbFile string) (*sql.DB, error) {
 		panic(err)
 	}
 
-	return db, nil
+	return Database{
+		DB:      db,
+		Timeout: timeout,
+	}, nil
+}
+
+func (d *Database) Close() {
+	d.DB.Close()
 }

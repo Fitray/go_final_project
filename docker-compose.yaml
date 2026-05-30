@@ -1,0 +1,19 @@
+services:
+  scheduler:
+    build: .
+    container_name: scheduler
+    env_file:
+      - .env
+
+    ports:
+      - "${TODO_PORT}:${TODO_PORT}"
+
+    environment:
+      TODO_PORT: "${TODO_PORT}"
+      TODO_DBFILE: "${TODO_DBFILE}"
+      TODO_PASSWORD: "${TODO_PASSWORD}"
+
+    volumes:
+      - ./data:/data
+    
+    restart: always
