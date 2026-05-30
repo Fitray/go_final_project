@@ -35,7 +35,9 @@ func Init(dbFile string, timeout time.Duration) (Database, error) {
 
 	dir := filepath.Dir(dbFile)
 	if dir != "." && dir != "/" {
-		os.MkdirAll(dir, 0755)
+		if err := os.MkdirAll(dir, 0755); err != nil {
+			return Database{}, err
+		}
 	}
 
 	_, err := os.Stat(dbFile)

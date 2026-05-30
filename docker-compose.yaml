@@ -14,6 +14,6 @@ services:
       TODO_PASSWORD: "${TODO_PASSWORD}"
 
     volumes:
-      - ./data:/data
+      - ./data:/app/data
     
     restart: always
