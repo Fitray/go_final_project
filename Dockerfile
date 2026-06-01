@@ -1,10 +1,12 @@
-FROM ubuntu:latest
+FROM alpine:latest
 
 WORKDIR /app
 
-COPY main .
-COPY web ./web
+COPY go.mod go.sum ./
+RUN go mod download
 
-EXPOSE 7540
+COPY . .
+
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main ./cmd/main.go
 
 CMD ["./main"]
