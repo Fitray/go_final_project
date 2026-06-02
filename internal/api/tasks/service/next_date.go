@@ -18,12 +18,12 @@ func (s *TasksService) NextDate(
 			fmt.Errorf("repeat param can't be empty: %w", core_errors.ErrBadRequest)
 	}
 
-	now, err := time.Parse("20060102", nowStr)
+	now, err := time.Parse(scheduler.TimeFormat, nowStr)
 	if err != nil {
 		return "", fmt.Errorf("%w: %v", err, core_errors.ErrBadRequest)
 	}
 
-	start, err := time.Parse("20060102", startStr)
+	start, err := time.Parse(scheduler.TimeFormat, startStr)
 	if err != nil {
 		return "", fmt.Errorf("%w: %v", err, core_errors.ErrBadRequest)
 	}

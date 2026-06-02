@@ -130,11 +130,11 @@ func ParseRule(
 	if repeat == "" {
 		return core_domain.NextDateParams{}, fmt.Errorf("repeat param can't be empty: %w", core_errors.ErrBadRequest)
 	}
-	now, err := time.Parse("20060102", now_str)
+	now, err := time.Parse(TimeFormat, now_str)
 	if err != nil {
 		return core_domain.NextDateParams{}, fmt.Errorf("%w: %v", err, core_errors.ErrBadRequest)
 	}
-	start, err := time.Parse("20060102", dstart)
+	start, err := time.Parse(TimeFormat, dstart)
 	if err != nil {
 		return core_domain.NextDateParams{}, fmt.Errorf("%w: %v", err, core_errors.ErrBadRequest)
 	}

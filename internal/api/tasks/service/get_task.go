@@ -6,6 +6,7 @@ import (
 
 	core_domain "github.com/Fitray/go_final_project/internal/core/domain"
 	core_errors "github.com/Fitray/go_final_project/internal/core/errors"
+	"github.com/Fitray/go_final_project/internal/scheduler"
 )
 
 func (s *TasksService) GetTasks(
@@ -18,8 +19,8 @@ func (s *TasksService) GetTasks(
 			fmt.Errorf("limit should be 1 or more: %w", core_errors.ErrBadRequest)
 	}
 	if search != "" {
-		if time, err := time.Parse("02.01.2006", search); err == nil {
-			search = time.Format("20060102")
+		if time, err := time.Parse(scheduler.DotsTimeFormat, search); err == nil {
+			search = time.Format(scheduler.TimeFormat)
 			tasksReponse, err := s.tasksRepository.GetTasksByDate(search, limit)
 			if err != nil {
 				return core_domain.GetTasksResponse{

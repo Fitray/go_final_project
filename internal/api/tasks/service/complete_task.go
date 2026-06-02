@@ -5,6 +5,7 @@ import (
 	"time"
 
 	core_errors "github.com/Fitray/go_final_project/internal/core/errors"
+	"github.com/Fitray/go_final_project/internal/scheduler"
 )
 
 func (s *TasksService) CompleteTask(id string) error {
@@ -17,7 +18,7 @@ func (s *TasksService) CompleteTask(id string) error {
 		return err
 	}
 
-	now_str := time.Now().UTC().Format("20060102")
+	now_str := time.Now().UTC().Format(scheduler.TimeFormat)
 	dstart := task.Date
 	if dstart == "" {
 		dstart = now_str

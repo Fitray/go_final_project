@@ -9,6 +9,11 @@ import (
 	core_errors "github.com/Fitray/go_final_project/internal/core/errors"
 )
 
+const (
+	TimeFormat     = "20060102"
+	DotsTimeFormat = "02.01.2006"
+)
+
 func isValidDay(date time.Time, days []int) bool {
 	lastDay := time.Date(date.Year(), date.Month()+1, 0, 0, 0, 0, 0,
 		time.UTC).Day()
@@ -37,7 +42,7 @@ func nextDateFromDays(
 	for {
 		start = start.AddDate(0, 0, days)
 		if start.After(now) {
-			return start.Format("20060102"), nil
+			return start.Format(TimeFormat), nil
 		}
 	}
 }
@@ -48,7 +53,7 @@ func nextDateFromYear(
 	for {
 		start = start.AddDate(year, 0, 0)
 		if start.After(now) {
-			return start.Format("20060102"), nil
+			return start.Format(TimeFormat), nil
 		}
 	}
 }
@@ -63,7 +68,7 @@ func nextDateFromMonths(
 				if len(months) > 0 && !slices.Contains(months, int(start.Month())) {
 					continue
 				}
-				return start.Format("20060102"), nil
+				return start.Format(TimeFormat), nil
 			}
 		}
 	}
@@ -80,7 +85,7 @@ func nextDateFromWeeks(
 				dayWeek = 7
 			}
 			if slices.Contains(days, dayWeek) {
-				return start.Format("20060102"), nil
+				return start.Format(TimeFormat), nil
 			}
 		}
 	}

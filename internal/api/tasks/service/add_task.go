@@ -8,14 +8,18 @@ import (
 	core_errors "github.com/Fitray/go_final_project/internal/core/errors"
 )
 
+const (
+	TimeFormat = "20060102"
+)
+
 func (s *TasksService) CheckTask(
 	taskRequest core_domain.Task,
 ) (core_domain.Task, error) {
 	if taskRequest.Date == "" {
-		taskRequest.Date = time.Now().Format("20060102")
+		taskRequest.Date = time.Now().Format("TimeFormat")
 	}
 
-	t, err := time.Parse("20060102", taskRequest.Date)
+	t, err := time.Parse("TimeFormat", taskRequest.Date)
 	if err != nil {
 		return taskRequest,
 			fmt.Errorf("%w:%w", err, core_errors.ErrBadRequest)
