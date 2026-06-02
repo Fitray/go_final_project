@@ -21,7 +21,7 @@ func (r *TasksRepository) AddTask(
 	RETURNING id
 	`
 	var id int
-	err := r.DB.DB.QueryRowContext(
+	err := r.DB.Database.QueryRowContext(
 		ctx,
 		query,
 		taskRequest.Date,

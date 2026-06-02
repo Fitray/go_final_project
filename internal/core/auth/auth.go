@@ -10,8 +10,8 @@ import (
 )
 
 type Auth struct {
-	Password  string `envconfig:"TODO_PASSWORD" required:"true"`
-	JWTSecret string `envconfig:"TODO_JWT_SECRET" required:"true"`
+	Password  string `envconfig:"TODO_PASSWORD" default:"12345"`
+	JWTSecret string `envconfig:"TODO_JWT_SECRET" default:"megaSecretToken"`
 }
 
 func NewAuth() (Auth, error) {

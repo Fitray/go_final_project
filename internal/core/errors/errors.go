@@ -5,21 +5,35 @@ import (
 	"net/http"
 )
 
+type ErrorResponse struct {
+	Message string
+	Status  int
+}
+
+func (e *ErrorResponse) Error() string {
+	return e.Message
+}
+
 var (
-	ErrBadRequest = errors.New("bad request")
-	ErrNotFound   = errors.New("not found")
-	ErrAuthFailed = errors.New("authentication failed")
+	ErrBadRequest = &ErrorResponse{
+		Message: "bad request",
+		Status:  http.StatusBadRequest}
+	ErrNotFound = &ErrorResponse{
+		Message: "not found",
+		Status:  http.StatusNotFound}
+	ErrAuthFailed = &ErrorResponse{
+		Message: "authentication failed",
+		Status:  http.StatusUnauthorized}
 )
 
 func GetStatusCode(err error) int {
-	switch {
-	case errors.Is(err, ErrBadRequest):
-		return http.StatusBadRequest
-	case errors.Is(err, ErrNotFound):
-		return http.StatusNotFound
-	case errors.Is(err, ErrAuthFailed):
-		return http.StatusUnauthorized
-	default:
-		return http.StatusInternalServerError
+	if err == nil {
+		return http.StatusOK
 	}
+
+	var res *ErrorResponse
+	if ok := errors.As(err, &res); ok {
+		return res.Status
+	}
+	return http.StatusInternalServerError
 }

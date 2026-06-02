@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	core_domain "github.com/Fitray/go_final_project/internal/core/domain"
+	core_errors "github.com/Fitray/go_final_project/internal/core/errors"
 	core_response "github.com/Fitray/go_final_project/internal/core/response"
 )
 
@@ -20,7 +21,7 @@ func (h *TasksHandler) UpdateTask(w http.ResponseWriter, r *http.Request) {
 
 	if err := h.tasksService.UpdateTask(task); err != nil {
 		wr.JSONResponce(map[string]string{"error": err.Error()},
-			http.StatusInternalServerError)
+			core_errors.GetStatusCode(err))
 		return
 	}
 

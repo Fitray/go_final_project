@@ -20,6 +20,10 @@ func main() {
 	_ = godotenv.Load()
 
 	path := os.Getenv("TODO_DBFILE")
+	if path == "" {
+		path = "data/scheduler.db"
+	}
+
 	db, err := core_db.Init(path, 10*time.Second)
 	if err != nil {
 		panic(err)

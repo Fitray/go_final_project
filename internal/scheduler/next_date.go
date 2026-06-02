@@ -1,4 +1,4 @@
-package tasks_repository
+package scheduler
 
 import (
 	"fmt"
@@ -31,7 +31,7 @@ func isValidDay(date time.Time, days []int) bool {
 	return false
 }
 
-func nextDate_Days(
+func nextDateFromDays(
 	now, start time.Time, days int,
 ) (string, error) {
 	for {
@@ -42,7 +42,7 @@ func nextDate_Days(
 	}
 }
 
-func nextDate_Year(
+func nextDateFromYear(
 	now, start time.Time, year int,
 ) (string, error) {
 	for {
@@ -53,7 +53,7 @@ func nextDate_Year(
 	}
 }
 
-func nextDate_Months(
+func nextDateFromMonths(
 	now, start time.Time, months, days []int,
 ) (string, error) {
 	for {
@@ -69,7 +69,7 @@ func nextDate_Months(
 	}
 }
 
-func nextDate_Weeks(
+func nextDateFromWeeks(
 	now, start time.Time, days []int,
 ) (string, error) {
 	for {
@@ -86,18 +86,20 @@ func nextDate_Weeks(
 	}
 }
 
-func (r *TasksRepository) NextDate(
-	now, start time.Time, params core_domain.NextDateParams,
+func NextDate(
+	now,
+	start time.Time,
+	params core_domain.NextDateParams,
 ) (string, error) {
 	switch params.Type {
 	case "d":
-		return nextDate_Days(now, start, params.Day)
+		return nextDateFromDays(now, start, params.Day)
 	case "y":
-		return nextDate_Year(now, start, 1)
+		return nextDateFromYear(now, start, 1)
 	case "m":
-		return nextDate_Months(now, start, params.Months, params.Days)
+		return nextDateFromMonths(now, start, params.Months, params.Days)
 	case "w":
-		return nextDate_Weeks(now, start, params.Days)
+		return nextDateFromWeeks(now, start, params.Days)
 	default:
 		return "", fmt.Errorf("invalid format: %w", core_errors.ErrBadRequest)
 	}

@@ -1,8 +1,6 @@
 package tasks_service
 
 import (
-	"time"
-
 	core_domain "github.com/Fitray/go_final_project/internal/core/domain"
 )
 
@@ -11,20 +9,17 @@ type TasksService struct {
 }
 
 type TasksRepository interface {
-	NextDate(
-		now, start time.Time, params core_domain.NextDateParams,
-	) (string, error)
 	AddTask(taskRequest core_domain.Task) (core_domain.NewTaskResponse, error)
-	GetTasks_NoSearch(
+	GetTasks(
 		limit int,
 	) (core_domain.GetTasksResponse, error)
-	GetTasks_TextSearch(
+	GetTasksByText(
 		search string, limit int,
 	) (core_domain.GetTasksResponse, error)
-	GetTasks_DateSearch(
+	GetTasksByDate(
 		search string, limit int,
 	) (core_domain.GetTasksResponse, error)
-	GetTasks_FromID(
+	GetTaskByID(
 		id string,
 	) (core_domain.Task, error)
 	UpdateTask(taskRequest core_domain.Task) error

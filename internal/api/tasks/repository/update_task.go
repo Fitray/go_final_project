@@ -4,10 +4,13 @@ import (
 	"context"
 	"fmt"
 
+	core_domain "github.com/Fitray/go_final_project/internal/core/domain"
 	core_errors "github.com/Fitray/go_final_project/internal/core/errors"
 )
 
-func (r *TasksRepository) CompleteTask(id string, nextDate string) error {
+func (r *TasksRepository) UpdateTask(
+	taskRequest core_domain.Task,
+) error {
 	ctx, cancel := context.WithTimeout(
 		context.Background(),
 		r.DB.Timeout,
@@ -15,10 +18,13 @@ func (r *TasksRepository) CompleteTask(id string, nextDate string) error {
 	defer cancel()
 
 	query := `
-	UPDATE scheduler SET date = $1 WHERE id = $2
+	UPDATE scheduler
+	SET date = $1, title = $2, comment = $3, repeat = $4
+	WHERE id = $5
 	`
-
-	res, err := r.DB.DB.ExecContext(ctx, query, nextDate, id)
+	res, err := r.DB.Database.ExecContext(ctx, query,
+		taskRequest.Date, taskRequest.Title, taskRequest.Comment,
+		taskRequest.Repeat, taskRequest.Id)
 	if err != nil {
 		return err
 	}

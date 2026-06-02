@@ -20,7 +20,7 @@ func (s *TasksService) GetTasks(
 	if search != "" {
 		if time, err := time.Parse("02.01.2006", search); err == nil {
 			search = time.Format("20060102")
-			tasksReponse, err := s.tasksRepository.GetTasks_DateSearch(search, limit)
+			tasksReponse, err := s.tasksRepository.GetTasksByDate(search, limit)
 			if err != nil {
 				return core_domain.GetTasksResponse{
 					Tasks: []core_domain.Task{},
@@ -28,7 +28,7 @@ func (s *TasksService) GetTasks(
 			}
 			return tasksReponse, nil
 		} else {
-			tasksReponse, err := s.tasksRepository.GetTasks_TextSearch(search, limit)
+			tasksReponse, err := s.tasksRepository.GetTasksByText(search, limit)
 			if err != nil {
 				return core_domain.GetTasksResponse{
 					Tasks: []core_domain.Task{},
@@ -38,7 +38,7 @@ func (s *TasksService) GetTasks(
 		}
 	}
 
-	tasksReponse, err := s.tasksRepository.GetTasks_NoSearch(limit)
+	tasksReponse, err := s.tasksRepository.GetTasks(limit)
 	if err != nil {
 		return core_domain.GetTasksResponse{
 			Tasks: []core_domain.Task{},
@@ -50,7 +50,7 @@ func (s *TasksService) GetTasks(
 func (s *TasksService) GetTask(
 	id string,
 ) (core_domain.Task, error) {
-	taskResponse, err := s.tasksRepository.GetTasks_FromID(id)
+	taskResponse, err := s.tasksRepository.GetTaskByID(id)
 	if err != nil {
 		return core_domain.Task{}, err
 	}

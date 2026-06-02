@@ -24,8 +24,8 @@ const (
 )
 
 type Database struct {
-	DB      *sql.DB
-	Timeout time.Duration
+	Database *sql.DB
+	Timeout  time.Duration
 }
 
 func Init(dbFile string, timeout time.Duration) (Database, error) {
@@ -67,11 +67,11 @@ func Init(dbFile string, timeout time.Duration) (Database, error) {
 	}
 
 	return Database{
-		DB:      db,
-		Timeout: timeout,
+		Database: db,
+		Timeout:  timeout,
 	}, nil
 }
 
 func (d *Database) Close() {
-	d.DB.Close()
+	d.Database.Close()
 }

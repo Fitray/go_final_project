@@ -7,7 +7,7 @@ import (
 )
 
 type Config struct {
-	Addr string `envconfig:"TODO_PORT" required="true"`
+	Addr string `envconfig:"TODO_PORT" default:"7540"`
 }
 
 func NewConfig() (Config, error) {

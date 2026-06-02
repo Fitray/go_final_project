@@ -14,7 +14,7 @@ type TasksHandler struct {
 }
 
 type TasksService interface {
-	NextDate(now, date, repeat string) (string, error)
+	NextDate(nowStr, startStr, repeat string) (string, error)
 	AddTask(taskRequest core_domain.Task) (core_domain.NewTaskResponse, error)
 	GetTasks(
 		search string, limit int,

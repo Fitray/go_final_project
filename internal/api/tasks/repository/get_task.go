@@ -15,7 +15,7 @@ func (r *TasksRepository) getTasks_Rows(
 	)
 	defer cancel()
 
-	rows, err := r.DB.DB.QueryContext(ctx, query, args...)
+	rows, err := r.DB.Database.QueryContext(ctx, query, args...)
 	if err != nil {
 		return core_domain.GetTasksResponse{
 			Tasks: []core_domain.Task{},
@@ -39,6 +39,12 @@ func (r *TasksRepository) getTasks_Rows(
 		tasksResponse.Tasks = append(tasksResponse.Tasks, task)
 	}
 
+	if err := rows.Err(); err != nil {
+		return core_domain.GetTasksResponse{
+			Tasks: []core_domain.Task{},
+		}, err
+	}
+
 	return tasksResponse, nil
 }
 
@@ -51,7 +57,7 @@ func (r *TasksRepository) getTasks_Row(
 	)
 	defer cancel()
 
-	row := r.DB.DB.QueryRowContext(ctx, query, args...)
+	row := r.DB.Database.QueryRowContext(ctx, query, args...)
 
 	var tasksResponse core_domain.Task
 	err := row.Scan(
@@ -64,7 +70,7 @@ func (r *TasksRepository) getTasks_Row(
 	return tasksResponse, nil
 }
 
-func (r *TasksRepository) GetTasks_NoSearch(
+func (r *TasksRepository) GetTasks(
 	limit int,
 ) (core_domain.GetTasksResponse, error) {
 	query := `
@@ -76,7 +82,7 @@ func (r *TasksRepository) GetTasks_NoSearch(
 	return r.getTasks_Rows(query, limit)
 }
 
-func (r *TasksRepository) GetTasks_TextSearch(
+func (r *TasksRepository) GetTasksByText(
 	search string, limit int,
 ) (core_domain.GetTasksResponse, error) {
 	query := `
@@ -89,7 +95,7 @@ func (r *TasksRepository) GetTasks_TextSearch(
 	return r.getTasks_Rows(query, "%"+search+"%", limit)
 }
 
-func (r *TasksRepository) GetTasks_DateSearch(
+func (r *TasksRepository) GetTasksByDate(
 	search string, limit int,
 ) (core_domain.GetTasksResponse, error) {
 	query := `
@@ -101,7 +107,7 @@ func (r *TasksRepository) GetTasks_DateSearch(
 	return r.getTasks_Rows(query, search, limit)
 }
 
-func (r *TasksRepository) GetTasks_FromID(
+func (r *TasksRepository) GetTaskByID(
 	id string,
 ) (core_domain.Task, error) {
 	query := `
