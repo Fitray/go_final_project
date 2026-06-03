@@ -2,6 +2,7 @@ package tests
 
 import (
 	"os"
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -25,9 +26,19 @@ func count(db *sqlx.DB) (int, error) {
 
 func openDB(t *testing.T) *sqlx.DB {
 	dbfile := DBFile
+
+	// Тесты запускаются из директории tests, а TODO_DBFILE содержит относительный путь
+	// Поэтому относительные пути дополнительно приводятся через "..".
+	// Иначе тесты просто не могут найти файл базы данных при прямом подключении, как тут.
+	// Если нельзя менять этот файл никак, то перед запуском тестов придётся
+	// Запускать export TODO_DBFILE=$(pwd)/путь к БД из env файла
 	envFile := os.Getenv("TODO_DBFILE")
 	if len(envFile) > 0 {
-		dbfile = envFile
+		if !filepath.IsAbs(envFile) {
+			dbfile = filepath.Join("..", envFile)
+		} else {
+			dbfile = envFile
+		}
 	}
 	db, err := sqlx.Connect("sqlite", dbfile)
 	assert.NoError(t, err)

@@ -6,20 +6,17 @@ import (
 
 	core_domain "github.com/Fitray/go_final_project/internal/core/domain"
 	core_errors "github.com/Fitray/go_final_project/internal/core/errors"
-)
-
-const (
-	TimeFormat = "20060102"
+	"github.com/Fitray/go_final_project/internal/scheduler"
 )
 
 func (s *TasksService) CheckTask(
 	taskRequest core_domain.Task,
 ) (core_domain.Task, error) {
 	if taskRequest.Date == "" {
-		taskRequest.Date = time.Now().Format("TimeFormat")
+		taskRequest.Date = time.Now().Format(scheduler.TimeFormat)
 	}
 
-	t, err := time.Parse("TimeFormat", taskRequest.Date)
+	t, err := time.Parse(scheduler.TimeFormat, taskRequest.Date)
 	if err != nil {
 		return taskRequest,
 			fmt.Errorf("%w:%w", err, core_errors.ErrBadRequest)
@@ -30,8 +27,8 @@ func (s *TasksService) CheckTask(
 			fmt.Errorf("invalid title: %w", core_errors.ErrBadRequest)
 	}
 
-	todayStr := time.Now().Format("20060102")
-	today, err := time.Parse("20060102", todayStr)
+	todayStr := time.Now().Format(scheduler.TimeFormat)
+	today, err := time.Parse(scheduler.TimeFormat, todayStr)
 
 	if err != nil {
 		return taskRequest, err

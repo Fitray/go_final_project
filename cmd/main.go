@@ -20,7 +20,7 @@ func main() {
 	_ = godotenv.Load()
 
 	path := os.Getenv("TODO_DBFILE")
-	if path == "" {
+	if len(path) == 0 {
 		path = "data/scheduler.db"
 	}
 
