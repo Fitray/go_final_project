@@ -1,0 +1,14 @@
+services:
+  scheduler:
+    build: .
+    container_name: scheduler
+    env_file:
+      - .env
+
+    ports:
+      - "${TODO_PORT}:${TODO_PORT}"
+
+    volumes:
+      - ./data:/app/data
+    
+    restart: unless-stopped

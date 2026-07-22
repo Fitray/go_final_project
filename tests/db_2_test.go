@@ -2,10 +2,12 @@ package tests
 
 import (
 	"os"
+	"path/filepath"
 	"testing"
 	"time"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 	_ "modernc.org/sqlite"
 )
@@ -24,10 +26,23 @@ func count(db *sqlx.DB) (int, error) {
 }
 
 func openDB(t *testing.T) *sqlx.DB {
+	// Без этого тест не видит переменные окружения и не читает TODO_DBFILE на чистой машине
+	_ = godotenv.Load("../.env")
+
 	dbfile := DBFile
+
+	// Тесты запускаются из директории tests, а TODO_DBFILE содержит относительный путь
+	// Поэтому относительные пути дополнительно приводятся через "..".
+	// Иначе тесты просто не могут найти файл базы данных при прямом подключении, как тут.
+	// ЕСЛИ ЭТОТ ФАЙЛ НЕЛЬЗЯ МЕНЯТЬ НИКАК, ТОГДА ПРИДЁТСЯ ПЕРЕД ЗАПУСКОМ ТЕСТА
+	// ПРОПИСЫВАТЬ: export TODO_DBFILE=$(pwd)/путь к БД из env файла, Я ДРУГОГО ПУТИ НЕ НАШЁЛ
 	envFile := os.Getenv("TODO_DBFILE")
 	if len(envFile) > 0 {
-		dbfile = envFile
+		if !filepath.IsAbs(envFile) {
+			dbfile = filepath.Join("..", envFile)
+		} else {
+			dbfile = envFile
+		}
 	}
 	db, err := sqlx.Connect("sqlite", dbfile)
 	assert.NoError(t, err)
